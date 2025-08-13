@@ -1,0 +1,33 @@
+.dataTables_length,
+.dataTables_filter {
+    margin-bottom: 1rem;
+}
+
+.dataTables_filter {
+    margin-left: auto;
+}
+
+.dataTables_wrapper .dataTables_length select {
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+/* table.dataTable thead th {
+            text-align: center !important;
+        } */
+
+/* Fix DataTables select overlap with Tailwind */
+.dataTables_wrapper .dataTables_length label select {
+    padding: 6px 10px;
+    border-radius: 0.375rem;
+    /* Tailwind rounded-md */
+    border: 1px solid #d1d5db;
+    /* Tailwind gray-300 */
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1em;
+    padding-right: 2rem;
+}
