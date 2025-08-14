@@ -3,13 +3,11 @@
 namespace App\Repositories\Contact;
 
 use App\Helpers\FormHelper;
-use App\Jobs\SendWelcomeEmail;
 use App\Models\Contact\Contact;
 use App\Models\Account\Account;
 use App\Models\User;
 use App\Traits\HandlesRelationshipAttach;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -35,16 +33,14 @@ class ContactRepository implements ContactRepositoryInterface
         return $form;
     }
 
-
     public function getTableViewData(bool $trashed = false): array
     {
         return [
-            'headers' => config('CustomeFields.form_fields.contacts'),  // Must NOT be null!
+            'headers' => config('CustomeFields.form_fields.contacts'),
             'routeBase' => 'contacts',
             'isTrash' => $trashed,
         ];
     }
-
 
     public function getForDataTable(Request $request, bool $trashed = false)
     {
@@ -52,47 +48,39 @@ class ContactRepository implements ContactRepositoryInterface
             ? Contact::onlyTrashed()->with(['accounts', 'users'])->select('contacts.*')
             : Contact::with(['accounts', 'users'])->select('contacts.*');
 
-        return DataTables::of($query)
-            ->addColumn('user_name', function ($contact) {
-                return $contact->users->pluck('name')->implode(', ') ?: 'N/A';
-            })
-            ->addColumn('account_name', function ($contact) {
-                return $contact->accounts->pluck('name')->implode(', ') ?: 'N/A';
-            })
-            ->rawColumns(['user_name', 'account_name']) // optional if HTML involved
-            ->make(true);
-    }
+        $contacts = $query->get();
 
+        foreach ($contacts as $contact) {
+            $contact->user_name = $contact->users->pluck('name')->implode(', ') ?: 'N/A';
+            $contact->account_name = $contact->accounts->pluck('name')->implode(', ') ?: 'N/A';
+        }
+
+        return DataTables::of($contacts)->make(true);
+    }
 
     public function createContact(array $data): Contact
     {
         $contact = Contact::create($data);
-        SendWelcomeEmail::dispatch($contact); // 🔥 Queued
-        $this->attachRelationships($contact, $data); // <-- Attach manually
-
+        $this->attachRelationships($contact, $data); // attach users/accounts dynamically
         return $contact;
     }
 
     public function updateContact(Contact $contact, array $data): Contact
     {
         $contact->fill($data)->save();
-        $this->attachRelationships($contact, $data); // Re-attach for updates
+        $this->attachRelationships($contact, $data); // re-attach for updates
         return $contact;
     }
 
     public function getByIdWithRelations($id)
     {
-        $contact = Contact::findOrFail($id);
+        $contact = Contact::with(['accounts', 'users'])->findOrFail($id);
 
-        // Fetch related account IDs from pivot
-        $accountIds = DB::table('account_contact')
-            ->where('contact_id', $id)
-            ->pluck('account_id');
-
-        // Fetch the Account models manually
-        $accounts = Account::whereIn('id', $accountIds)->get();
-
-        return compact('contact', 'accounts');
+        return [
+            'contact' => $contact,
+            'accounts' => $contact->accounts,
+            'users' => $contact->users,
+        ];
     }
 
     public function deleteContact(Contact $contact): void

@@ -40,7 +40,7 @@
                 @foreach ($formFields as $field)
                 @php
                 // Set options dynamically if available
-                if ($field['name'] === 'product_ids' && isset($products)) {
+                if ($field['name'] === 'product_id' && isset($products)) {
                 $field['options'] = $products;
                 }
                 if ($field['name'] === 'user_id' && isset($users)) {
@@ -61,7 +61,7 @@
                 $value = $data->users?->pluck('id')->first() ?? null;
                 } elseif ($data && $field['name'] === 'account_id') {
                 $value = $data->accounts?->pluck('id')->first() ?? null;
-                } elseif ($data && $field['name'] === 'product_ids') {
+                } elseif ($data && $field['name'] === 'product_id') {
                 $value = $data->products?->pluck('id')->toArray() ?? [];
                 } else {
                 $value = $data?->getRawOriginal($field['name']) ?? '';

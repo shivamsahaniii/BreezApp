@@ -2,19 +2,20 @@
 
 namespace App\Models\Account;
 
-use App\Models\Contact\Contact;
-use App\Models\User;
-use App\Traits\HandlesModelEvents;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
-
-
+use App\Traits\HandlesModelEvents;
+use App\Traits\HandlesRelationshipAttach;
+use App\Traits\HasDynamicRelationships;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class Account extends Model
 {
     use SoftDeletes;
     use HandlesModelEvents;
+    use HandlesRelationshipAttach;
+    use HasDynamicRelationships;
+    use HasUuids;
 
     public $incrementing = false;
     protected $keyType = 'string';
@@ -29,49 +30,23 @@ class Account extends Model
         'profile',
     ];
 
-    public function getRouteKeyName()
-    {
-        return 'id';
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            if (!$model->getKey()) {
-                $model->{$model->getKeyName()} = (string) Str::uuid();
-            }
-        });
-    }
-
-    function getNameAttribute($val)
+    public function getNameAttribute($val)
     {
         return ucfirst($val);
     }
 
-    function getIndustryAttribute($val)
+    public function getIndustryAttribute($val)
     {
         return ucfirst($val);
     }
 
-    function getPhoneAttribute($val)
+    public function getPhoneAttribute($val)
     {
         return "+91" . $val;
     }
 
-    function setEmailAttribute($val)
+    public function setEmailAttribute($val)
     {
         $this->attributes['email'] = lcfirst($val);
-    }
-
-    public function users()
-    {
-        return $this->belongsToMany(User::class, 'account_user', 'account_id', 'user_id');
-    }
-
-    public function contacts()
-    {
-        return $this->hasMany(Contact::class, 'account_contact', 'account_id','contact_id');
     }
 }

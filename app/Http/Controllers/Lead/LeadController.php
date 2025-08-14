@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Lead;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\lead\StoreLeadRequest;
 use App\Http\Requests\lead\UpdateLeadRequest;
-use App\Jobs\MassUpdateJob;
 use App\Jobs\MassUpdateRecords;
 use App\Models\Lead\Lead;
 use App\Traits\HandlesProfileImage;
@@ -16,7 +15,6 @@ class LeadController extends Controller
 {
     use HandlesProfileImage;
     protected string $modelClass = Lead::class;
-
     protected $leadRepo;
 
     public function __construct(LeadRepositoryInterface $leadRepo)
@@ -29,7 +27,6 @@ class LeadController extends Controller
         if ($request->ajax()) {
             return $this->leadRepo->getDataTable($request);
         }
-
         return view('activities.index', $this->leadRepo->getTableViewData());
     }
 
@@ -62,7 +59,6 @@ class LeadController extends Controller
 
     public function update(UpdateLeadRequest $request, Lead $lead)
     {
-        //dd($request);
         $validated = $request->validated();
         $validated['profile'] = $this->uploadProfileImage($request, $lead->profile);
         $this->leadRepo->updateLead($lead, $validated);
@@ -87,31 +83,26 @@ class LeadController extends Controller
 
     public function restore($id)
     {
-        $lead = Lead::onlyTrashed()->findOrFail($id);
-        $this->leadRepo->restore($lead->id);
-
+        $this->leadRepo->restore($id);
         return redirect()->route('leads.trash')->with('success', 'Lead restored successfully.');
     }
 
     public function forceDelete($id)
     {
         $this->leadRepo->forceDelete($id);
-
         return redirect()->route('leads.trash')->with('success', 'Lead permanently deleted.');
     }
 
     public function massUpdate(Request $request)
-{
-    $validated = $request->validate([
-        'ids' => 'required|array',
-        'field' => 'required|string',
-        'new_value' => 'required'
-    ]);
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'field' => 'required|string',
+            'new_value' => 'required'
+        ]);
 
-    $modelClass = $this->modelClass; // Defined in controller property
-    MassUpdateRecords::dispatch($modelClass, $validated['ids'], $validated['field'], $validated['new_value']);
+        MassUpdateRecords::dispatch($this->modelClass, $validated['ids'], $validated['field'], $validated['new_value']);
 
-    return back()->with('success', 'Mass update initiated.');
-}
-
+        return back()->with('success', 'Mass update initiated.');
+    }
 }

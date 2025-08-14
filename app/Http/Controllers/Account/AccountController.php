@@ -50,7 +50,7 @@ class AccountController extends Controller
         return redirect()->route('accounts.index')->with('success', 'Account created successfully.');
     }
 
-     public function show($id)
+    public function show($id)
     {
         $fields = config('CustomeFields.form_fields.accounts');
         $data = $this->accountRepo->getByIdWithRelations($id);
@@ -67,12 +67,11 @@ class AccountController extends Controller
         return DataTables::eloquent(Account::with('user')->latest())
             ->toJson();
     }
-
+    
     public function edit(Account $account)
     {
         return view('activities.form', $this->accountRepo->getFormConfig('edit', $account));
     }
-
 
     public function update(UpdateAccountRequest $request, Account $account)
     {

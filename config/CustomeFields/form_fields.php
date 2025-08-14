@@ -203,7 +203,7 @@ return [
             'relationship' => 'users'
         ],
         [
-            'name' => 'product_ids', // Use plural for multi-select
+            'name' => 'product_id', // Use plural for multi-select
             'type' => 'select-multiple',
             'label' => 'Associated Products',
             'required' => false,

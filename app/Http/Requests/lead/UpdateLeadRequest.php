@@ -29,8 +29,8 @@ class UpdateLeadRequest extends FormRequest
             'source' => 'required|string|max:255',
             'status' => 'required|in:new,contacted,qualified,lost',
             'message' => 'nullable|string',
-            'product_ids' => 'nullable|array',
-            'product_ids.*' => 'exists:products,id',
+            'product_id' => 'nullable|array',
+            'product_id.*' => 'exists:products,id',
             'user_id' => 'required|exists:users,id', // single user id validation
         ];
     }

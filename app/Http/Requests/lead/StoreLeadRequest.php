@@ -31,8 +31,8 @@ class StoreLeadRequest extends FormRequest
             'profile' => 'sometimes|mimes:png,jqg,jpeg,webp',
             'message' => 'nullable|string',
             'user_id' => 'required|exists:users,id',
-            'product_ids' => 'nullable|array',
-            'product_ids.*' => 'exists:products,id',
+            'product_id' => 'nullable|array',
+            'product_id.*' => 'exists:products,id',
 
         ];
     }

@@ -43,7 +43,6 @@ class AccountRepository implements AccountRepositoryInterface
         ];
     }
 
-
     public function getForDataTable(Request $request, bool $trashed = false)
     {
         $query = $trashed
@@ -51,6 +50,7 @@ class AccountRepository implements AccountRepositoryInterface
             : Account::with('users')->select('accounts.*');
 
         $accounts = $query->get();
+
         foreach ($accounts as $account) {
             $account->user_name = optional($account->users->first())->name ?? 'N/A';
         }
@@ -74,17 +74,12 @@ class AccountRepository implements AccountRepositoryInterface
 
     public function getByIdWithRelations($id)
     {
-        $account = Account::findOrFail($id);
+        $account = Account::with('contacts', 'users')->findOrFail($id);
 
-        // Fetch related contact IDs from pivot
-        $contactIds = DB::table('account_contact')
-            ->where('account_id', $id)
-            ->pluck('contact_id');
-
-        // Fetch Contact models manually
-        $contacts = Contact::whereIn('id', $contactIds)->get();
-
-        return compact('account', 'contacts');
+        return [
+            'account' => $account,
+            'contacts' => $account->contacts,
+        ];
     }
 
     public function deleteAccount(Account $account): void

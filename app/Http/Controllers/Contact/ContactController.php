@@ -14,8 +14,8 @@ use Illuminate\Http\Request;
 class ContactController extends Controller
 {
     use HandlesProfileImage;
-    protected string $modelClass = Contact::class;
 
+    protected string $modelClass = Contact::class;
     protected $contactRepo;
 
     public function __construct(ContactRepositoryInterface $contactRepo)
@@ -54,7 +54,8 @@ class ContactController extends Controller
 
         return view('contacts.show', [
             'contact' => $data['contact'],
-            'accounts' => $data['accounts'],
+            'accounts' => $data['accounts'] ?? collect(),
+            'users' => $data['users'] ?? collect(),
             'fields' => $fields,
         ]);
     }
@@ -94,15 +95,15 @@ class ContactController extends Controller
     {
         $this->contactRepo->restoreContact($id);
 
-        return redirect()->route('contacts.trash')->with('success', 'Contact restored.');
+        return redirect()->route('contacts.trash')->with('success', 'Contact restored successfully.');
     }
 
     public function forceDelete($id)
     {
         $this->contactRepo->forceDeleteContact($id);
+
         return redirect()->route('contacts.trash')->with('success', 'Contact permanently deleted.');
     }
-
 
     public function massUpdate(Request $request)
     {
@@ -112,7 +113,7 @@ class ContactController extends Controller
             'new_value' => 'required'
         ]);
 
-        $modelClass = $this->modelClass; // Defined in controller property
+        $modelClass = $this->modelClass;
         MassUpdateRecords::dispatch($modelClass, $validated['ids'], $validated['field'], $validated['new_value']);
 
         return back()->with('success', 'Mass update initiated.');
