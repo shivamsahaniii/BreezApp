@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Account\Account;
+use App\Models\Contact\Contact;
+use App\Models\Lead\Lead;
+use App\Observers\DynamicModelObserver;
 use App\Repositories\Account\AccountRepository;
 use App\Repositories\Account\AccountRepositoryInterface;
 use App\Repositories\Contact\ContactRepository;
@@ -33,6 +37,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Lead::observe(DynamicModelObserver::class);
+        Account::observe(DynamicModelObserver::class);
+        Contact::observe(DynamicModelObserver::class);
     }
 }

@@ -2,8 +2,6 @@
 
 namespace App\Models\Contact;
 
-use App\Traits\HandlesModelEvents;
-use App\Traits\HandlesRelationshipAttach;
 use App\Traits\HasDynamicRelationships;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
@@ -12,8 +10,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Contact extends Model
 {
     use SoftDeletes;
-    use HandlesModelEvents;
-    use HandlesRelationshipAttach;
     use HasDynamicRelationships;
     use HasUuids;
 

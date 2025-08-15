@@ -63,14 +63,12 @@ class LeadRepository implements LeadRepositoryInterface
     public function createLead(array $data): Lead
     {
         $lead = Lead::create($data);
-        $this->attachRelationships($lead, $data);
         return $lead;
     }
 
     public function updateLead(Lead $lead, array $data): Lead
     {
         $lead->fill($data)->save();
-        $this->attachRelationships($lead, $data);
         return $lead;
     }
 

@@ -13,7 +13,6 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ContactRepository implements ContactRepositoryInterface
 {
-    use HandlesRelationshipAttach;
 
     public function getFormConfig(string $type, $contact = null): array
     {
@@ -61,14 +60,12 @@ class ContactRepository implements ContactRepositoryInterface
     public function createContact(array $data): Contact
     {
         $contact = Contact::create($data);
-        $this->attachRelationships($contact, $data); // attach users/accounts dynamically
         return $contact;
     }
 
     public function updateContact(Contact $contact, array $data): Contact
     {
         $contact->fill($data)->save();
-        $this->attachRelationships($contact, $data); // re-attach for updates
         return $contact;
     }
 

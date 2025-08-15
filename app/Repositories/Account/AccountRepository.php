@@ -4,18 +4,13 @@ namespace App\Repositories\Account;
 
 use App\Helpers\FormHelper;
 use App\Models\Account\Account;
-use App\Models\Contact\Contact;
 use App\Models\User;
-use App\Traits\HandlesRelationshipAttach;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class AccountRepository implements AccountRepositoryInterface
 {
-    use HandlesRelationshipAttach;
 
     public function getFormConfig(string $type, $account = null): array
     {
@@ -61,14 +56,12 @@ class AccountRepository implements AccountRepositoryInterface
     public function createAccount(array $data): Account
     {
         $account = Account::create($data);
-        $this->attachRelationships($account, $data);
         return $account;
     }
 
     public function updateAccount(Account $account, array $data): Account
     {
         $account->fill($data)->save();
-        $this->attachRelationships($account, $data);
         return $account;
     }
 

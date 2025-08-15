@@ -46,12 +46,12 @@
                     <input type="radio" name="role" value="user" checked class="mr-2">
                     User
                 </label>
-                @if(\App\Models\User::where('role', 'admin')->count() === 0)
+
                 <label class="flex items-center">
                     <input type="radio" name="role" value="admin" class="mr-2">
                     Admin
                 </label>
-                @endif
+               
             </div>
         </div>
 

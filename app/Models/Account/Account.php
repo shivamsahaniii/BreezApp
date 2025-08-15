@@ -4,18 +4,12 @@ namespace App\Models\Account;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\HandlesModelEvents;
-use App\Traits\HandlesRelationshipAttach;
 use App\Traits\HasDynamicRelationships;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class Account extends Model
 {
-    use SoftDeletes;
-    use HandlesModelEvents;
-    use HandlesRelationshipAttach;
-    use HasDynamicRelationships;
-    use HasUuids;
+    use SoftDeletes, HasDynamicRelationships, HasUuids;
 
     public $incrementing = false;
     protected $keyType = 'string';

@@ -9,16 +9,16 @@ trait HasDynamicRelationships
     public function __call($method, $parameters)
     {
         $module = Str::plural(Str::lower(class_basename($this)));
-        $config = config("CustomeFields.relationship_fields.$module", []);
+        $relations = config("CustomeFields.relationship_fields.$module", []);
 
-        if (!isset($config[$method])) {
+        if (!isset($relations[$method])) {
             return parent::__call($method, $parameters);
         }
 
-        $relation = $config[$method];
+        $relation = $relations[$method];
         $related = $relation['model'];
 
-        return match ($relation['type']) {
+        return match ($relation['type'] ?? null) {
             'hasMany' => $this->hasMany(
                 $related,
                 $relation['foreign_key'] ?? null,
